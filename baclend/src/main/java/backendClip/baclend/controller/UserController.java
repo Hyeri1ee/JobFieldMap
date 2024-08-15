@@ -6,8 +6,12 @@ import backendClip.baclend.dto.user.UserUpdateRequest;
 import backendClip.baclend.dto.user.UserUpdateResponse;
 import backendClip.baclend.service.UserServiceImpl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -20,27 +24,29 @@ public class UserController {
   }
 
   //register
-  @PostMapping("/register")
-  public ResponseEntity<UserJoinResponse> registerUser(@RequestBody UserJoinRequest request){
+  @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity registerUser(@RequestBody UserJoinRequest request){
     UserJoinResponse userJoinResponse = userService.register(request);
-    return ResponseEntity.status(HttpStatus.OK)
-            .body(userJoinResponse);
+    Map<String, Object> result = new HashMap<>();
+    result.put("response", userJoinResponse);
+    return ResponseEntity.ok(result);
   }
   //login
 
   //logout
 
   //update info
-  @PutMapping("/update")
-  public ResponseEntity<UserUpdateResponse> updateUser(@RequestParam Long id, @RequestBody UserUpdateRequest request){
-    UserUpdateResponse userUpdateResponse = userService.update(id,request);
-    return ResponseEntity.status(HttpStatus.OK)
-            .body(userUpdateResponse);
+  @PostMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest request){
+    UserUpdateResponse userUpdateResponse = userService.update(id, request);
+    Map<String, Object> result = new HashMap<>();
+    result.put("response", userUpdateResponse);
+    return ResponseEntity.ok(result);
   }
 
   //withdraw
-  @DeleteMapping("/remove")
-  public ResponseEntity removeUser(@RequestParam Long id){
+  @DeleteMapping(value = "/delete/{id}")
+  public ResponseEntity removeUser(@PathVariable("id") Long id){
     String message =  userService.remove(id);
     return ResponseEntity.status(HttpStatus.OK).body(message);
   }

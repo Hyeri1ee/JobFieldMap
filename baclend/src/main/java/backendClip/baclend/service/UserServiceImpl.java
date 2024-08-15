@@ -29,7 +29,9 @@ public class UserServiceImpl implements UserService{
 
   public UserUpdateResponse update(Long id, UserUpdateRequest request) {
     User user = userRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("user not found. id= " + id));
-    return user.update(request);
+    UserUpdateResponse response = user.update(request);
+    userRepository.save(user);
+    return response;
   }
 
   public String remove(Long id) {

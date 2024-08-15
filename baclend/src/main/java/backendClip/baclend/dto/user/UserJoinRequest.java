@@ -1,11 +1,14 @@
 package backendClip.baclend.dto.user;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import org.springframework.web.bind.annotation.RequestMapping;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @Getter
+@Builder
+@NoArgsConstructor
 public class UserJoinRequest {
 
   private String name;

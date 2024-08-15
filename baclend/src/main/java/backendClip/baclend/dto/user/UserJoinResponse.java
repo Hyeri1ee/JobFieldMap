@@ -1,7 +1,13 @@
 package backendClip.baclend.dto.user;
 
 import backendClip.baclend.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
+@AllArgsConstructor
+@Getter
+@Builder
 public class UserJoinResponse {
   private String name;
 
@@ -14,4 +20,5 @@ public class UserJoinResponse {
     this.password = user.getPassword();
     this.email = user.getEmail();
   }
+
 }

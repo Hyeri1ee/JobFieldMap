@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class User {
 
   @Id
@@ -51,9 +51,9 @@ public class User {
     this.email = request.getEmail();
 
     return UserUpdateResponse.builder()
-            .name(name)
-            .email(email)
-            .password(password)
+            .name(this.name)
+            .email(this.email)
+            .password(this.password)
             .build();
   }
 }
