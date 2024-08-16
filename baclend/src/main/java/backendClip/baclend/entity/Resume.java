@@ -1,7 +1,10 @@
 package backendClip.baclend.entity;
 
+import backendClip.baclend.dto.resume.ResumeRequest;
+import backendClip.baclend.dto.resume.ResumeResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Resume {
   @Id
   @Column(name = "resume_id")
@@ -26,4 +30,15 @@ public class Resume {
   @JoinColumn(name = "user_id")
   private User user;
 
+  public ResumeResponse update(ResumeRequest request) {
+    this.uploadFile = request.getUploadFile();
+    this.description = request.getDescription();
+    this.user = request.getUser();
+
+    return ResumeResponse.builder()
+            .uploadFile(uploadFile)
+            .description(description)
+            .user(user)
+            .build();
+  }
 }

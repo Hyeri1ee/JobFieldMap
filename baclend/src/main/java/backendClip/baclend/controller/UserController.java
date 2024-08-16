@@ -4,6 +4,7 @@ import backendClip.baclend.dto.user.UserJoinRequest;
 import backendClip.baclend.dto.user.UserJoinResponse;
 import backendClip.baclend.dto.user.UserUpdateRequest;
 import backendClip.baclend.dto.user.UserUpdateResponse;
+import backendClip.baclend.entity.User;
 import backendClip.baclend.service.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,11 +25,19 @@ public class UserController {
   }
 
   //register
-  @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity registerUser(@RequestBody UserJoinRequest request){
     UserJoinResponse userJoinResponse = userService.register(request);
     Map<String, Object> result = new HashMap<>();
     result.put("response", userJoinResponse);
+    return ResponseEntity.ok(result);
+  }
+  //profile
+  @GetMapping(value = "/profile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity profileUser(@PathVariable("id") Long id){
+    User user = userService.findById(id);
+    Map<String, Object> result = new HashMap<>();
+    result.put("response", user);
     return ResponseEntity.ok(result);
   }
   //login

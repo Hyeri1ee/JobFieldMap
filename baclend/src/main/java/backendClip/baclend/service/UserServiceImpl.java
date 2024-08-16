@@ -9,7 +9,7 @@ import backendClip.baclend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
 
   public UserServiceImpl(UserRepository userRepository) {
@@ -38,5 +38,10 @@ public class UserServiceImpl implements UserService{
     User user = userRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("user not found. id= " + id));
     userRepository.delete(user);
     return "user is deleted";
+  }
+
+  public User findById(Long id) {
+    User user = userRepository.findById(id).orElseThrow( () -> new IllegalArgumentException("user not found. id= " + id));
+    return user;
   }
 }

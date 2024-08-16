@@ -15,10 +15,4 @@ public class UserUpdateResponse {
 
   private String email;
 
-  public UserUpdateResponse(User user) {
-    this.name = user.getName();
-    this.password = user.getPassword();
-    this.email = user.getEmail();
-  }
-
 }
