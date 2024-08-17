@@ -1,10 +1,8 @@
 package backendClip.baclend.controller;
 
-import backendClip.baclend.dto.user.UserJoinRequest;
-import backendClip.baclend.dto.user.UserJoinResponse;
-import backendClip.baclend.dto.user.UserUpdateRequest;
-import backendClip.baclend.dto.user.UserUpdateResponse;
+import backendClip.baclend.dto.user.*;
 import backendClip.baclend.entity.User;
+import backendClip.baclend.jwt.JwtUtil;
 import backendClip.baclend.service.UserServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/user")
 public class UserController {
 
   private final UserServiceImpl userService;
@@ -24,28 +21,30 @@ public class UserController {
     this.userService = userServiceImpl;
   }
 
-  //register
+  //join (로그인 없이는 요기만 access 가능)
   @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity registerUser(@RequestBody UserJoinRequest request){
-    UserJoinResponse userJoinResponse = userService.register(request);
+  public ResponseEntity joinUser(@RequestBody UserJoinRequest request){
+    UserJoinResponse userJoinResponse = userService.join(request);
     Map<String, Object> result = new HashMap<>();
     result.put("response", userJoinResponse);
     return ResponseEntity.ok(result);
   }
   //profile
-  @GetMapping(value = "/profile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity profileUser(@PathVariable("id") Long id){
-    User user = userService.findById(id);
-    Map<String, Object> result = new HashMap<>();
-    result.put("response", user);
-    return ResponseEntity.ok(result);
+  @GetMapping(value = "user/profile/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity profileUser(@PathVariable("id") Long id, @RequestHeader("Authorization") String token){
+    try {
+      System.out.println(new JwtUtil().isExpired(token));
+      User user = userService.findById(id,token);
+      Map<String, Object> result = new HashMap<>();
+      result.put("response", user);
+      return ResponseEntity.ok(result);
+    } catch (IllegalStateException | IllegalArgumentException e) {
+      return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+    }
   }
-  //login
-
-  //logout
 
   //update info
-  @PostMapping(value = "/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PostMapping(value = "user/update/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest request){
     UserUpdateResponse userUpdateResponse = userService.update(id, request);
     Map<String, Object> result = new HashMap<>();
@@ -54,7 +53,7 @@ public class UserController {
   }
 
   //withdraw
-  @DeleteMapping(value = "/delete/{id}")
+  @DeleteMapping(value = "user/delete/{id}")
   public ResponseEntity removeUser(@PathVariable("id") Long id){
     String message =  userService.remove(id);
     return ResponseEntity.status(HttpStatus.OK).body(message);

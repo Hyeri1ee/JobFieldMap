@@ -4,5 +4,5 @@ import backendClip.baclend.dto.user.UserJoinRequest;
 import backendClip.baclend.dto.user.UserJoinResponse;
 
 public interface UserService {
-  public UserJoinResponse register(UserJoinRequest request);
+  public UserJoinResponse join(UserJoinRequest request);
 }

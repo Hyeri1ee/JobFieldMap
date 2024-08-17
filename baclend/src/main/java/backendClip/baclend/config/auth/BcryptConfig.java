@@ -1,13 +1,13 @@
-package backendClip.baclend.config;
+package backendClip.baclend.config.auth;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
-public class BCryptConfig {
+public class BcryptConfig {
   @Bean
-  public BCryptPasswordEncoder passwordEncoder() {
+  public BCryptPasswordEncoder bCryptPasswordEncoder() {
     return new BCryptPasswordEncoder();
   }
 }

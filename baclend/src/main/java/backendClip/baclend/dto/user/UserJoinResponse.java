@@ -15,10 +15,13 @@ public class UserJoinResponse {
 
   private String email;
 
+  private String role;
+
   public UserJoinResponse(User user) {
     this.name = user.getName();
     this.password = user.getPassword();
     this.email = user.getEmail();
+    this.role = user.getRole();
   }
 
 }

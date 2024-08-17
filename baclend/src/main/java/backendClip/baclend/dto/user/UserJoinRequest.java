@@ -16,4 +16,6 @@ public class UserJoinRequest {
   private String password;
 
   private String email;
+
+  private String role;
 }

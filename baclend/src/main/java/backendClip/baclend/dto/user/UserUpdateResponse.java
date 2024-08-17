@@ -15,4 +15,6 @@ public class UserUpdateResponse {
 
   private String email;
 
+  private String role;
+
 }
