@@ -1,21 +1,29 @@
-package backendClip.baclend.config.auth;
+package backendClip.baclend.service;
 
-import backendClip.baclend.entity.User;
+import backendClip.baclend.dto.CustomUserDetails;
+import backendClip.baclend.entity.UserEntity;
 import backendClip.baclend.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
 @Service
-public class PrincipalDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
   private final UserRepository userRepository;
+
+  public CustomUserDetailsService(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
+
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User user = userRepository.findByName(username);
-    System.out.println("user = " + user);
-    return new PrincipalDetails(user);
+
+   UserEntity userData = userRepository.findByUsername(username);
+
+   if (userData != null){
+     return new CustomUserDetails(userData);
+   }
+    return null;
   }
 }

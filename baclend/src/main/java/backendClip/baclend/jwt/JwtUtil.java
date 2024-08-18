@@ -1,52 +1,48 @@
 package backendClip.baclend.jwt;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
-  @Value("${jwt.secretKey}")
-  private String secretKey;
-  @Value("${jwt.expiredMs}")
-  private  Long expiredMs;
 
-  public String getUserName(String token) {
-    return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-            .getBody().get("name", String.class);
+  private SecretKey secretKey;
+
+  public JwtUtil(@Value("${spring.jwt.secret}") String secret){
+    secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
+            Jwts.SIG.HS256.key().build().getAlgorithm());
   }
 
-  public boolean isExpired(String token) {
-    System.out.println(secretKey);
-    try {
-      Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
-      Date expirationDate = claims.getExpiration();
-      if (expirationDate == null) {
-        throw new IllegalArgumentException("Token does not have an expiration date");
-      }
-      return expirationDate.before(new Date());
-    } catch (ExpiredJwtException e) {
-      return true;
-    } catch (JwtException | IllegalArgumentException e) {
-      // 로깅 추가
-
-      throw new IllegalArgumentException("Invalid token: " + e.getMessage(), e);
-    }
+  public String getUsername(String token){
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token)
+            .getPayload().get("username",String.class);
   }
 
-  public String createJwt(String memberName, Long id) {
-    Claims claims = Jwts.claims();
-    claims.put("name", memberName);
-    System.out.println(secretKey);
+  public String getRole(String token) {
 
-    String token = Jwts.builder()
-            .setClaims(claims)
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
-            .signWith(SignatureAlgorithm.HS256, secretKey)
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+  }
+
+  public Boolean isExpired(String token) {
+
+    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+  }
+
+  public String createJwt(String username, String role, Long expiredMs){
+
+    return Jwts.builder()
+            .claim("username", username)
+            .claim("role",role)
+            .issuedAt(new Date(System.currentTimeMillis()))
+            .expiration(new Date(System.currentTimeMillis() + expiredMs))
+            .signWith(secretKey)
             .compact();
-    return token;
   }
+
 }
