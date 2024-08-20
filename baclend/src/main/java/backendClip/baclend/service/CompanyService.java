@@ -5,17 +5,22 @@ import backendClip.baclend.entity.CompanyEntity;
 import backendClip.baclend.repository.CompanyRepository;
 import org.checkerframework.checker.units.qual.C;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static backendClip.baclend.dto.CompanyDTO.convertEntityToDto;
 
@@ -49,54 +54,57 @@ public class CompanyService {
     String source;
     String workDetail = "";
 
-    Path path = Paths.get(System.getProperty("user.dir"),"src/main/resources/chromedriver.exe");
-    // WebDriver 경로 설정
-    System.setProperty("webdriver.chrome.driver",path.toString());
-    // WebDriver 옵션 설정
+    Path path = Paths.get(System.getProperty("user.dir"), "src/main/resources/chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver", path.toString());
     ChromeOptions options = new ChromeOptions();
-    options.addArguments("--start-maximized"); //전체화면으로 실행
-    options.addArguments("--diable-popup-blocking"); //팝업 무시
-    options.addArguments("--disable-default-apps"); //기본앱 사용안함
-    // WebDriver 객체 생성
+    options.addArguments("--start-maximized");
+    options.addArguments("--diable-popup-blocking");
+    options.addArguments("--disable-default-apps");
     ChromeDriver driver = new ChromeDriver(options);
 
     driver.get("https://www.wanted.co.kr/wdlist/518?country=kr&job_sort=job.recommend_order&years=-1&locations=all");
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    }
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-    /*crolling*/
-    List<WebElement> elements = driver.findElements(By.cssSelector("li.Card_Card__WdaEk > div"));
-    List<CompanyDTO> jobCards = new ArrayList<>(); // 여기에 크롤링한 데이터를 저장
+    List<CompanyDTO> jobCards = new ArrayList<>();
 
-    // 각 elements에 대하여
-    for (WebElement jobCardElement : elements) {
-      WebElement outside = jobCardElement.findElement(By.cssSelector("a"));
-      companyname = outside.getAttribute("data-company-name");
-      recruitPosition = outside.getAttribute("data-position-name");
-      source = outside.getAttribute("href");
+    while (true) {
+      try {
+        List<WebElement> elements = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.cssSelector("li.Card_Card__WdaEk > div")));
 
-      WebElement fortheReward = jobCardElement.findElement(By.cssSelector("a > div > div > span"));
-      reward = fortheReward.getText();
+        for (WebElement jobCardElement : elements) {
+          WebElement outside = jobCardElement.findElement(By.cssSelector("a"));
+          companyname = outside.getAttribute("data-company-name");
+          recruitPosition = outside.getAttribute("data-position-name");
+          source = outside.getAttribute("href");
 
-      driver.get(source);
+          WebElement fortheReward = jobCardElement.findElement(By.cssSelector("a > div > div > span"));
+          reward = fortheReward.getText();
 
-      List<WebElement> insideElements1 = driver.findElements(By.cssSelector("article.JobDescription_JobDescription__dq8G5 > div > div"));
-      for (WebElement insideDivElement : insideElements1) {
-        String one = insideDivElement.findElement(By.cssSelector("div > p > span")).getText();
-        workDetail += one;
+          driver.get(source);
+          wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("article.JobDescription_JobDescription__dq8G5 > div > div")));
+
+          List<WebElement> insideElements1 = driver.findElements(By.cssSelector("article.JobDescription_JobDescription__dq8G5 > div > div"));
+          for (WebElement insideDivElement : insideElements1) {
+            String one = insideDivElement.findElement(By.cssSelector("div > p > span")).getText();
+            workDetail += one;
+          }
+
+          CompanyDTO dto = new CompanyDTO();
+          dto.setCompanyname(companyname);
+          dto.setRecruitPosition(recruitPosition);
+          dto.setReward(reward);
+          dto.setSource(source);
+          dto.setWorkDetail(workDetail);
+          jobCards.add(dto);
+        }
+
+        // 다음 페이지로 이동
+        WebElement nextPageButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button.Pagination_next__7Kzre")));
+        nextPageButton.click();
+      } catch (StaleElementReferenceException | NoSuchElementException e) {
+        // 페이지 이동 실패 시 반복문 종료
+        break;
       }
-
-      // CompanyDTO 객체 생성 및 jobCards 리스트에 추가
-      CompanyDTO dto = new CompanyDTO();
-      dto.setCompanyname(companyname);
-      dto.setRecruitPosition(recruitPosition);
-      dto.setReward(reward);
-      dto.setSource(source);
-      dto.setWorkDetail(workDetail);
-      jobCards.add(dto);
     }
 
     // 데이터베이스에 저장
