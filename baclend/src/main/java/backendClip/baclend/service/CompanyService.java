@@ -53,7 +53,6 @@ public class CompanyService {
     String reward;
     String source;
     String workDetail = "";
-
     Path path = Paths.get(System.getProperty("user.dir"), "src/main/resources/chromedriver.exe");
     System.setProperty("webdriver.chrome.driver", path.toString());
     ChromeOptions options = new ChromeOptions();
