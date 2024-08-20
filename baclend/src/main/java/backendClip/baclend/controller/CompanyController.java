@@ -19,10 +19,9 @@ public class CompanyController {
 
   //크롤링 구현후->REACT화면 만들기
   @PostMapping("/join")
-  public String joinCompany(){//크롤링
-//    List<CompanyDTO> companyDTOList =  companyService.crollingAndSave();
-//    return ResponseEntity.status(HttpStatus.OK).body(companyDTOList);
-    return"asdf";
+  public ResponseEntity joinCompany(){//크롤링
+    List<CompanyDTO> companyDTOList =  companyService.crollingAndSave();
+    return ResponseEntity.status(HttpStatus.OK).body(companyDTOList);
 
   }
 

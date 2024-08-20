@@ -3,6 +3,7 @@ package backendClip.baclend.service;
 import backendClip.baclend.dto.CompanyDTO;
 import backendClip.baclend.entity.CompanyEntity;
 import backendClip.baclend.repository.CompanyRepository;
+import org.checkerframework.checker.units.qual.C;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,6 +11,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,15 +48,24 @@ public class CompanyService {
     String reward;
     String source;
     String workDetail = "";
-    String location; // location url
 
-    // 크롬 드라이버 설정
-    System.setProperty("webdriver.chrome.driver", "./chrome-headless-shell.exe"); // 윈도우
-    // 크롬 옵션 설정
+    Path path = Paths.get(System.getProperty("user.dir"),"src/main/resources/chromedriver.exe");
+    // WebDriver 경로 설정
+    System.setProperty("webdriver.chrome.driver",path.toString());
+    // WebDriver 옵션 설정
     ChromeOptions options = new ChromeOptions();
-    options.addArguments("--remote-allow-origins=*");
-    WebDriver driver = new ChromeDriver(options);
+    options.addArguments("--start-maximized"); //전체화면으로 실행
+    options.addArguments("--diable-popup-blocking"); //팝업 무시
+    options.addArguments("--disable-default-apps"); //기본앱 사용안함
+    // WebDriver 객체 생성
+    ChromeDriver driver = new ChromeDriver(options);
+
     driver.get("https://www.wanted.co.kr/wdlist/518?country=kr&job_sort=job.recommend_order&years=-1&locations=all");
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
 
     /*crolling*/
     List<WebElement> elements = driver.findElements(By.cssSelector("li.Card_Card__WdaEk > div"));

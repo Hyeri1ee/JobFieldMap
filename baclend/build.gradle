@@ -40,8 +40,7 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 
-	implementation 'org.seleniumhq.selenium:selenium-java:4.1.4'
-	implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.1.4'
+	implementation 'org.seleniumhq.selenium:selenium-java:4.9.1'
 
 
 }

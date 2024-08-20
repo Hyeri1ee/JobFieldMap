@@ -28,8 +28,6 @@ public class CompanyEntity {
 
   private String workDetail;
 
-  private String location; // location url
-
 
   @OneToMany(mappedBy = "companyEntity")
   private List<ImgEntity> imgs;
