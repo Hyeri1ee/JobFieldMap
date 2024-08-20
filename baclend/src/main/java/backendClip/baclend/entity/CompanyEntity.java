@@ -26,27 +26,9 @@ public class CompanyEntity {
 
   private String source;
 
-  private String detailIntroduction;
-
   private String workDetail;
 
-  private String requirement;
-
-  private String priority;
-
-  private String benefit;
-
-  private String recruitWay;
-
-  private String stack;
-
-  private String tag;
-
-  private Date dueDate;
-
   private String location; // location url
-
-  private String website; // website url
 
 
   @OneToMany(mappedBy = "companyEntity")
