@@ -25,11 +25,10 @@ public class CompanyController {
 
   }
 
-  @GetMapping("/get/{position}")
+  @GetMapping("/get/{position}") 
   public ResponseEntity getCompanies(@PathVariable("position") String position){
-    List<CompanyDTO> companyDTOList =  companyService.getCompanies(position);
-    return ResponseEntity.status(HttpStatus.OK).body(companyDTOList);
+    CompanyDTO companyDTO =  companyService.getCompany(position);
+    return ResponseEntity.status(HttpStatus.OK).body(companyDTO);
   }
-
 
 }

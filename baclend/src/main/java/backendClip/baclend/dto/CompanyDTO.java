@@ -1,6 +1,7 @@
 package backendClip.baclend.dto;
 
 import backendClip.baclend.entity.CompanyEntity;
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.util.Date;

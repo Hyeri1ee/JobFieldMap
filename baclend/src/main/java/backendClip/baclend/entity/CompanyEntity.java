@@ -1,11 +1,9 @@
 package backendClip.baclend.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -14,7 +12,7 @@ import java.util.List;
 public class CompanyEntity {
 
   @Id
-  @Column(name = "company_id")
+  @Column(name = "COMPANY_ID")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
 
@@ -26,9 +24,14 @@ public class CompanyEntity {
 
   private String source;
 
+  @Column(name = "work_detail" ,  length = 2000)
   private String workDetail;
 
 
-  @OneToMany(mappedBy = "companyEntity")
-  private List<ImgEntity> imgs;
+
+  @OneToMany(mappedBy = "company")
+  private List<ImgEntity> imgEntityList;
+
+  @OneToMany(mappedBy = "company")
+  private List<CategoryEntity> categoryEntityList;
 }

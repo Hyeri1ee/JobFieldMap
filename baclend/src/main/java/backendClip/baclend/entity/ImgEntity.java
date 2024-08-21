@@ -3,10 +3,9 @@ package backendClip.baclend.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
+@Entity
 @Getter
 @Setter
-@Entity
 public class ImgEntity {
 
   @Id
@@ -16,6 +15,6 @@ public class ImgEntity {
   private String url;
 
   @ManyToOne
-  @JoinColumn(name = "company_id")
-  private CompanyEntity companyEntity;
+  @JoinColumn(name = "COMPANY_ID")
+  private CompanyEntity company;
 }
