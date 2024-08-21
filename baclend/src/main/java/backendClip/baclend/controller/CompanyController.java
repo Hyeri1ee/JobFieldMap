@@ -1,8 +1,10 @@
 package backendClip.baclend.controller;
 
 import backendClip.baclend.dto.CompanyDTO;
+import backendClip.baclend.dto.LocationDTO;
 import backendClip.baclend.service.CompanyService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,15 @@ public class CompanyController {
   public ResponseEntity getCompanies(@PathVariable("position") String position){
     CompanyDTO companyDTO =  companyService.getCompany(position);
     return ResponseEntity.status(HttpStatus.OK).body(companyDTO);
+  }
+
+  @GetMapping("/get/map/{position}")
+  public ResponseEntity getLongLatitude(@PathVariable("position")String position){
+
+    String locationName =  companyService.getCompany(position).getLocationName();
+    String result = companyService.getLongLatitude(locationName);
+    return ResponseEntity.status(HttpStatus.OK).body(result);
+
   }
 
 }

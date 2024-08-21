@@ -1,8 +1,12 @@
 package backendClip.baclend.service;
 
 import backendClip.baclend.dto.CompanyDTO;
+import backendClip.baclend.dto.LocationDTO;
 import backendClip.baclend.entity.CompanyEntity;
 import backendClip.baclend.repository.CompanyRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.coyote.Request;
 import org.openqa.selenium.By;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
@@ -11,16 +15,24 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static backendClip.baclend.dto.CompanyDTO.convertEntityToDto;
+import static org.apache.el.util.MessageFactory.get;
 
 @Service
 public class CompanyService {
@@ -155,5 +167,49 @@ public class CompanyService {
     entity.setWorkDetail(dto.getWorkDetail());
     entity.setLocationName(dto.getLocationName());
     return entity;
+  }
+
+  public String getLongLatitude(String locationName) {
+    String clientId = "m270k2o4ho"; //애플리케이션 클라이언트 아이디
+    String clientSecret = "KxmfW01FTozjnUADLsT3G1zaKJX21SLYPRJUVSxL"; //애플리케이션 클라이언트 시크릿
+
+    String text = null;
+    try {
+      text = URLEncoder.encode(locationName, "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException("검색어 인코딩 실패",e);
+    }
+    String apiURL = "https://openapi.naver.com/v1/search/kin.json?query=" + text + "&display=1";    // JSON 결과
+    Map<String, String> requestHeaders = new HashMap<>();
+    requestHeaders.put("X-Naver-Client-Id", clientId);
+    requestHeaders.put("X-Naver-Client-Secret", clientSecret);
+    String responseBody = get(apiURL,requestHeaders);
+
+
+    return responseBody;
+//    // 응답 처리
+//    if (responseBody.getStatusCode() == HttpStatus.OK) {
+//      try {
+//        // JSON 파싱
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode root = objectMapper.readTree(response.getBody());
+//
+//        // 첫 번째 item에서 mapx, mapy 추출
+//        JsonNode item = root.path("items").get(0);
+//        Long longtitude = (long) item.path("mapx").asDouble();
+//        Long latitude = (long) item.path("mapy").asDouble();
+//
+//        // DTO 생성 및 반환
+//        LocationDTO locationDTO = new LocationDTO();
+//        locationDTO.setLongtitude(longtitude);
+//        locationDTO.setLatitude(latitude);
+//        return locationDTO;
+//
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//      }
+//    }
+
+    //return null; // 오류 시 null 반환
   }
 }
