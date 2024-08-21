@@ -27,7 +27,10 @@ public class CompanyEntity {
   @Column(name = "work_detail" ,  length = 2000)
   private String workDetail;
 
+  private String locationName;
 
+  @OneToOne(mappedBy = "company")
+  private LocationEntity location;
 
   @OneToMany(mappedBy = "company")
   private List<ImgEntity> imgEntityList;

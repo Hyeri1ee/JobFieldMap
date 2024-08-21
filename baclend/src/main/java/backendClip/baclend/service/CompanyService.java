@@ -98,12 +98,18 @@ public class CompanyService {
               }
               workDetail = workDetailBuilder.length() > 2000 ? workDetailBuilder.substring(0, 2000) : workDetailBuilder.toString();
 
+
+              WebElement locationInfo = driver.findElement(By.cssSelector("article.JobWorkPlace_JobWorkPlace__Q6Gml > div > div.JobWorkPlace_JobWorkPlace__map__location____MvP > span"));
+              String locationName = locationInfo.getText();
+
+
               CompanyDTO dto = new CompanyDTO();
               dto.setCompanyname(companyname);
               dto.setRecruitPosition(recruitPosition);
               dto.setReward(reward);
               dto.setSource(source);
               dto.setWorkDetail(workDetail);
+              dto.setLocationName(locationName);
               jobCards.add(dto);
 
               // 브라우저 뒤로가기
@@ -147,6 +153,7 @@ public class CompanyService {
     entity.setReward(dto.getReward());
     entity.setSource(dto.getSource());
     entity.setWorkDetail(dto.getWorkDetail());
+    entity.setLocationName(dto.getLocationName());
     return entity;
   }
 }

@@ -25,7 +25,7 @@ public class CompanyController {
 
   }
 
-  @GetMapping("/get/{position}") 
+  @GetMapping("/get/{position}")
   public ResponseEntity getCompanies(@PathVariable("position") String position){
     CompanyDTO companyDTO =  companyService.getCompany(position);
     return ResponseEntity.status(HttpStatus.OK).body(companyDTO);

@@ -17,6 +17,7 @@ public class CompanyDTO {
   private String reward;
   private String source;
   private String workDetail;
+  private String locationName;
 
   public static CompanyDTO convertEntityToDto(CompanyEntity entity) {
     return CompanyDTO.builder()
@@ -25,6 +26,7 @@ public class CompanyDTO {
             .reward(entity.getReward())
             .source(entity.getSource())
             .workDetail(entity.getWorkDetail())
+            .locationName(entity.getLocationName())
             .build();
   }
 }
